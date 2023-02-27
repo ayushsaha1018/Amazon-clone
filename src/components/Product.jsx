@@ -2,14 +2,38 @@ import Image from "next/image";
 import { useState } from "react";
 import { StarIcon } from "@heroicons/react/solid";
 import Currency from "react-currency-formatter";
+import { useDispatch } from "react-redux";
+import { addToBasket } from "../slices/basketSlice";
 
 function Product({ id, title, price, description, category, image, rate }) {
-  const [rating, setRating] = useState(Math.floor(rate));
-  const [hasPrime] = useState(Math.random() < 0.5);
+  const dispatch = useDispatch();
+
+  const rating = Math.floor(rate);
+  const [hasPrime, setHasPrime] = useState(Math.random() < 0.5);
+  const rates = Array.from({ length: rating }, (_, index) => {
+    return <StarIcon key={index} className="h-5 text-yellow-500" />;
+  });
+
+  const addItemToBasket = () => {
+    const product = {
+      id,
+      title,
+      price,
+      description,
+      category,
+      image,
+      rating,
+      hasPrime
+    };
+
+    dispatch(addToBasket(product));
+  };
 
   return (
     <div className="relative flex flex-col m-5 bg-white z-30 p-10">
-      <p className="absolute top-2 right-2 text-xs italic text-gray-400">{category}</p>
+      <p className="absolute top-2 right-2 text-xs italic text-gray-400">
+        {category}
+      </p>
       <Image
         className="h-52 w-52 mx-auto"
         src={image}
@@ -20,13 +44,7 @@ function Product({ id, title, price, description, category, image, rate }) {
       />
       <h4 className="my-3">{title}</h4>
 
-      <div className="flex">
-        {Array(rating)
-          .fill()
-          .map((_, i) => (
-            <StarIcon className="h-5 text-yellow-500" />
-          ))}
-      </div>
+      <div className="flex">{rates}</div>
 
       <p className="text-xs my-2 line-clamp-2">{description}</p>
 
@@ -41,7 +59,9 @@ function Product({ id, title, price, description, category, image, rate }) {
         </div>
       )}
 
-      <button className="mt-auto button">Add to Basket</button>
+      <button onClick={addItemToBasket} className="mt-auto button">
+        Add to Basket
+      </button>
     </div>
   );
 }
