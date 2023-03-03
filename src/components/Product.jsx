@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/solid";
 import Currency from "react-currency-formatter";
 import { useDispatch } from "react-redux";
@@ -8,8 +8,16 @@ import { addToBasket } from "../slices/basketSlice";
 function Product({ id, title, price, description, category, image, rate }) {
   const dispatch = useDispatch();
 
-  const rating = Math.floor(rate);
-  const [hasPrime, setHasPrime] = useState(Math.random() < 0.5);
+  const [rating, setRating] = useState(1);
+  const [hasPrime, setHasPrime] = useState(true);
+
+  useEffect(() => {
+    setRating(
+      Math.floor(rate
+    ));
+    setHasPrime(Math.random() < 0.5);
+  }, []);
+
   const rates = Array.from({ length: rating }, (_, index) => {
     return <StarIcon key={index} className="h-5 text-yellow-500" />;
   });
